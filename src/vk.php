@@ -199,7 +199,7 @@ class Vk{
         if(count($files) == 0) return false;
         if(!function_exists('curl_init')) return false;
 
-        $data_json = $this->api('photos.getWallUploadServer', array('group_id'=> intval($gid)));
+        $data_json = $this->api('photos.getWallUploadServer', array('group_id'=> (int) $gid ));
 
         if(!isset($data_json['upload_url'])) return false;
 
@@ -235,7 +235,7 @@ class Vk{
 
             $upload_data = json_decode(curl_exec($ch), true);
 
-            $upload_data['group_id'] = intval($gid);
+            $upload_data['group_id'] = (int) $gid;
 
             $upload_data += $additional_data;
             
@@ -272,7 +272,7 @@ class Vk{
         if(!is_string($file)) return false;
         if(!function_exists('curl_init')) return false;
 
-        $data_json = $this->api('docs.getUploadServer', array('gid'=> intval($gid)));
+        $data_json = $this->api('docs.getUploadServer', array('gid'=> (int) $gid ));
 
         if(!isset($data_json['upload_url'])) return false;
 
