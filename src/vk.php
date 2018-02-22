@@ -42,7 +42,10 @@ class Vk{
 
     // Magic Method (*__*)
     function __call($method, $params){
-        if(!isset($params[0])) $params[0] = [];
+        if(!isset($params[0]))
+        {
+	        $params[ 0 ] = [];
+        }
         return $this->api($this->_api_scope . '.' . $method, $params[0]);
     }
 
@@ -66,7 +69,10 @@ class Vk{
         $url    = $this->http_build_query($method, $params);
 
         // Для тестирования и отладки запросов
-        if($this->debug) return $url;
+        if($this->debug)
+        {
+	        return $url;
+        }
 
         return $this->call($url);
     }
@@ -125,7 +131,14 @@ class Vk{
 
     private function call($url = ''){
 
-        if(function_exists('curl_init')) $json = $this->curl_post($url); else $json = file_get_contents($url);
+        if(function_exists('curl_init'))
+        {
+	        $json = $this->curl_post($url);
+        }
+        else
+        {
+	        $json = file_get_contents($url);
+        }
 
         $json = json_decode($json, true);
 
@@ -135,7 +148,10 @@ class Vk{
             throw new VkException($json['error']['error_msg'], $json['error']['error_code']);
         }
 
-        if(isset($json['response'])) return $json['response'];
+        if(isset($json['response']))
+        {
+	        return $json[ 'response' ];
+        }
 
         return $json;
     }
@@ -145,7 +161,10 @@ class Vk{
     */
     private function curl_post($url){
 
-        if(!function_exists('curl_init')) return false;
+        if(!function_exists('curl_init'))
+        {
+	        return false;
+        }
 
         $param = parse_url($url);
 
@@ -196,12 +215,21 @@ class Vk{
      */
     public function upload_photo($gid = 0, array $files = [], $return_ids = false, array $additional_data = [], $usleep = 0){
         
-        if(count($files) == 0) return false;
-        if(!function_exists('curl_init')) return false;
+        if(count($files) == 0)
+        {
+	        return false;
+        }
+        if(!function_exists('curl_init'))
+        {
+	        return false;
+        }
 
         $data_json = $this->api('photos.getWallUploadServer', array('group_id'=> intval($gid)));
 
-        if(!isset($data_json['upload_url'])) return false;
+        if(!isset($data_json['upload_url']))
+        {
+	        return false;
+        }
 
         $temp = array_chunk($files, 4); // лимит файлов
 
@@ -210,7 +238,10 @@ class Vk{
         
         foreach($temp as $chunk_index => $temp_chunk){
             
-            if($chunk_index) usleep($usleep);
+            if($chunk_index)
+            {
+	            usleep($usleep);
+            }
             
             $files = [];
             
@@ -248,9 +279,13 @@ class Vk{
                 foreach($response as $photo){
 
                     if($return_ids)
-                        $attachments[] = $photo['id'];
+                    {
+	                    $attachments[] = $photo[ 'id' ];
+                    }
                     else
-                        $attachments[] = 'photo'.$photo['owner_id'].'_'.$photo['id'];
+                    {
+	                    $attachments[] = 'photo' . $photo[ 'owner_id' ] . '_' . $photo[ 'id' ];
+                    }
                 }
             }
             
@@ -269,18 +304,30 @@ class Vk{
      */
     public function upload_doc($gid = false, $file){
 
-        if(!is_string($file)) return false;
-        if(!function_exists('curl_init')) return false;
+        if(!is_string($file))
+        {
+	        return false;
+        }
+        if(!function_exists('curl_init'))
+        {
+	        return false;
+        }
 
         $data_json = $this->api('docs.getUploadServer', array('gid'=> intval($gid)));
 
-        if(!isset($data_json['upload_url'])) return false;
+        if(!isset($data_json['upload_url']))
+        {
+	        return false;
+        }
 
         $attachment = false;
 
         $path = realpath($file);
 
-        if(!$path) return false;
+        if(!$path)
+        {
+	        return false;
+        }
 
         $files['file'] = (class_exists('CURLFile', false)) ? new CURLFile($file) : '@' . $file;
 
@@ -322,12 +369,21 @@ class Vk{
      */
     public function upload_video($options = [], $file = false){
 
-        if(!is_array($options)) return false;
-        if(!function_exists('curl_init')) return false;
+        if(!is_array($options))
+        {
+	        return false;
+        }
+        if(!function_exists('curl_init'))
+        {
+	        return false;
+        }
 
         $data_json = $this->api('video.save', $options);
 
-        if(!isset($data_json['upload_url'])) return false;
+        if(!isset($data_json['upload_url']))
+        {
+	        return false;
+        }
 
         $attachment = 'video'.$data_json['owner_id'].'_'.$data_json['video_id'];
 
@@ -345,7 +401,10 @@ class Vk{
             //@todo надо протестировать заливку
             $path = realpath($file);
 
-            if(!$path) return false;
+            if(!$path)
+            {
+	            return false;
+            }
 
             $files['video_file'] = (class_exists('CURLFile', false)) ? new CURLFile($file) : '@' . $file;
 
